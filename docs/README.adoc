@@ -1,0 +1,3 @@
+= Doodle Config
+
+Doodle 社区驱动贡献游戏配置中心服务组件。
