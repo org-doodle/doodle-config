@@ -1,0 +1,3 @@
+org.doodle.config.autoconfigure.client.ConfigClientAutoConfiguration
+org.doodle.config.autoconfigure.server.ConfigServerAutoConfiguration
+org.doodle.config.autoconfigure.vaadin.ConfigVaadinAutoConfiguration

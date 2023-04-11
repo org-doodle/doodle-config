@@ -16,7 +16,14 @@
     <maven.deploy.skip>true</maven.deploy.skip>
   </properties>
   <modules>
+    <module>doodle-config-autoconfigure</module>
+    <module>doodle-config-client-core</module>
     <module>doodle-config-dependencies</module>
     <module>doodle-config-parent</module>
+    <module>doodle-config-server</module>
+    <module>doodle-config-server-core</module>
+    <module>doodle-config-starters</module>
+    <module>doodle-config-vaadin</module>
+    <module>doodle-config-vaadin-core</module>
   </modules>
 </project>
