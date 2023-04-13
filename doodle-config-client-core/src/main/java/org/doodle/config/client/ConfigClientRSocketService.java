@@ -15,9 +15,9 @@
  */
 package org.doodle.config.client;
 
-import java.io.IOException;
 import lombok.AllArgsConstructor;
-import org.doodle.design.config.ConfigEntity;
+import lombok.SneakyThrows;
+import org.doodle.design.config.ConfigInstanceDTO;
 import org.doodle.design.config.ConfigService;
 import org.springframework.messaging.rsocket.RSocketRequester;
 import reactor.core.publisher.Flux;
@@ -26,11 +26,11 @@ import reactor.core.publisher.Flux;
 public class ConfigClientRSocketService implements ConfigService {
   private final RSocketRequester requester;
 
+  @SneakyThrows
   @Override
-  public Flux<ConfigEntity> getConfig(String dataId, String group, String configId)
-      throws IOException {
+  public Flux<ConfigInstanceDTO> getConfig(String dataId, String group, String configId) {
     return requester
         .route("config.{dataId}.{group}.{configId}", dataId, group, configId)
-        .retrieveFlux(ConfigEntity.class);
+        .retrieveFlux(ConfigInstanceDTO.class);
   }
 }

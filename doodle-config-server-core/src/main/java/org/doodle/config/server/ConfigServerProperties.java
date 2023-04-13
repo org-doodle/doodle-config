@@ -22,6 +22,4 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = ConfigServerProperties.PREFIX)
 public class ConfigServerProperties {
   public static final String PREFIX = "doodle.config.server";
-
-  private ConfigServerDataType dataType = ConfigServerDataType.JPA;
 }

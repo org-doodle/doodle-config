@@ -17,7 +17,7 @@ package org.doodle.config.autoconfigure.server;
 
 import org.doodle.config.server.ConfigServerConfigController;
 import org.doodle.config.server.ConfigServerConfigService;
-import org.doodle.config.server.ConfigServerInstanceEntityRepository;
+import org.doodle.config.server.ConfigServerInstanceRepository;
 import org.doodle.design.config.ConfigService;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -28,7 +28,7 @@ public class ConfigServerRSocketConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  public ConfigService configService(ConfigServerInstanceEntityRepository configRepository) {
+  public ConfigService configService(ConfigServerInstanceRepository configRepository) {
     return new ConfigServerConfigService(configRepository);
   }
 

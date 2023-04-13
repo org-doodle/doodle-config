@@ -25,9 +25,5 @@ import org.springframework.context.annotation.Import;
 @AutoConfiguration(before = MongoDataAutoConfiguration.class)
 @ConditionalOnClass(ConfigServerProperties.class)
 @EnableConfigurationProperties(ConfigServerProperties.class)
-@Import({
-  ConfigServerJpaConfiguration.class,
-  ConfigServerMongodbConfiguration.class,
-  ConfigServerRSocketConfiguration.class
-})
+@Import({ConfigServerMongodbConfiguration.class, ConfigServerRSocketConfiguration.class})
 public class ConfigServerAutoConfiguration {}

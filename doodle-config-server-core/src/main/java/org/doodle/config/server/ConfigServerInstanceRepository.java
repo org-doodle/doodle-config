@@ -17,13 +17,13 @@ package org.doodle.config.server;
 
 import java.util.List;
 import org.doodle.design.config.ConfigInstanceEntity;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ConfigServerInstanceEntityRepository
-    extends CrudRepository<ConfigInstanceEntity, String> {
+public interface ConfigServerInstanceRepository
+    extends MongoRepository<ConfigInstanceEntity, String> {
   @Query("{'$and':[{'dataId': ?0}, {'group': ?1}, {'configId': ?2}]}")
   List<ConfigInstanceEntity> findConfig(String dataId, String group, String configId);
 }

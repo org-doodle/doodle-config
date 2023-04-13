@@ -15,32 +15,20 @@
  */
 package org.doodle.config.server;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.doodle.design.config.ConfigInstanceDTO;
-import org.doodle.design.config.ConfigInstanceEntity;
 import org.doodle.design.config.ConfigService;
-import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Flux;
 
 @AllArgsConstructor
 public class ConfigServerConfigService implements ConfigService {
 
-  private final ConfigServerInstanceEntityRepository configRepository;
+  private final ConfigServerInstanceRepository configRepository;
 
   @SneakyThrows
   @Override
   public Flux<ConfigInstanceDTO> getConfig(String dataId, String group, String configId) {
-    List<ConfigInstanceEntity> entities = configRepository.findConfig(dataId, group, configId);
-    if (CollectionUtils.isEmpty(entities)) {
-      return Flux.empty();
-    }
-
-    if (entities.size() > 1) {
-      throw new Error("");
-    }
-
     return Flux.empty();
   }
 }

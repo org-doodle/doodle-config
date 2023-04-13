@@ -41,11 +41,6 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.data</groupId>
-      <artifactId>spring-data-jpa</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-mongodb</artifactId>
       <optional>true</optional>
     </dependency>

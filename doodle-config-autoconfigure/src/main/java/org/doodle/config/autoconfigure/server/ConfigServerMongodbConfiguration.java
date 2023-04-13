@@ -15,10 +15,8 @@
  */
 package org.doodle.config.autoconfigure.server;
 
-import org.doodle.config.autoconfigure.condition.ConditionalOnConfigServerDataType;
-import org.doodle.config.server.ConfigServerDataType;
-import org.doodle.config.server.ConfigServerInstanceEntityRepository;
-import org.doodle.config.server.ConfigServerSharedEntityRepository;
+import org.doodle.config.server.ConfigServerInstanceRepository;
+import org.doodle.config.server.ConfigServerSharedRepository;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -26,17 +24,22 @@ import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.core.convert.*;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
+import org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventListener;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 @AutoConfiguration
 @EnableMongoAuditing
 @EnableMongoRepositories(
-    basePackageClasses = {
-      ConfigServerInstanceEntityRepository.class,
-      ConfigServerSharedEntityRepository.class
-    })
-@ConditionalOnConfigServerDataType(ConfigServerDataType.MONGODB)
+    basePackageClasses = {ConfigServerInstanceRepository.class, ConfigServerSharedRepository.class})
 public class ConfigServerMongodbConfiguration {
+
+  @Bean
+  @ConditionalOnMissingBean
+  public ValidatingMongoEventListener validatingMongoEventListener(
+      LocalValidatorFactoryBean factory) {
+    return new ValidatingMongoEventListener(factory);
+  }
 
   @Bean
   @ConditionalOnMissingBean(MongoConverter.class)

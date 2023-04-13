@@ -20,5 +20,4 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ConfigServerSharedEntityRepository
-    extends MongoRepository<ConfigSharedEntity, String> {}
+public interface ConfigServerSharedRepository extends MongoRepository<ConfigSharedEntity, String> {}
