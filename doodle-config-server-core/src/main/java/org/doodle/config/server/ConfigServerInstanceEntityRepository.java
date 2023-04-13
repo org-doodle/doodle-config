@@ -16,20 +16,14 @@
 package org.doodle.config.server;
 
 import java.util.List;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.doodle.design.config.ConfigEntity;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
+import org.doodle.design.config.ConfigInstanceEntity;
+import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
-/** 服务配置 */
-@Data
-@EqualsAndHashCode(callSuper = true)
-@Document(collection = ConfigServerConfigEntity.COLLECTION)
-public class ConfigServerConfigEntity extends ConfigEntity {
-  public static final String COLLECTION = "server-config";
-
-  /** 关联公共配置 */
-  @DocumentReference(collection = ConfigServerPropertiesEntity.COLLECTION)
-  private List<ConfigServerPropertiesEntity> properties;
+@Repository
+public interface ConfigServerInstanceEntityRepository
+    extends CrudRepository<ConfigInstanceEntity, String> {
+  @Query("{'$and':[{'dataId': ?0}, {'group': ?1}, {'configId': ?2}]}")
+  List<ConfigInstanceEntity> findConfig(String dataId, String group, String configId);
 }

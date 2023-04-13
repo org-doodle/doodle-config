@@ -15,10 +15,11 @@
  */
 package org.doodle.config.server;
 
-import java.io.IOException;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import org.doodle.design.config.ConfigEntity;
+import lombok.SneakyThrows;
+import org.doodle.design.config.ConfigInstanceDTO;
+import org.doodle.design.config.ConfigInstanceEntity;
 import org.doodle.design.config.ConfigService;
 import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Flux;
@@ -26,12 +27,12 @@ import reactor.core.publisher.Flux;
 @AllArgsConstructor
 public class ConfigServerConfigService implements ConfigService {
 
-  private final ConfigServerConfigRepository configRepository;
+  private final ConfigServerInstanceEntityRepository configRepository;
 
+  @SneakyThrows
   @Override
-  public Flux<ConfigEntity> getConfig(String dataId, String group, String configId)
-      throws IOException {
-    List<ConfigServerConfigEntity> entities = configRepository.findConfig(dataId, group, configId);
+  public Flux<ConfigInstanceDTO> getConfig(String dataId, String group, String configId) {
+    List<ConfigInstanceEntity> entities = configRepository.findConfig(dataId, group, configId);
     if (CollectionUtils.isEmpty(entities)) {
       return Flux.empty();
     }
@@ -40,6 +41,6 @@ public class ConfigServerConfigService implements ConfigService {
       throw new Error("");
     }
 
-    return Flux.fromIterable(entities);
+    return Flux.empty();
   }
 }

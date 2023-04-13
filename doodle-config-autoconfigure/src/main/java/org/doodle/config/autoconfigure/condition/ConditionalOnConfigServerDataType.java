@@ -13,9 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.doodle.config.server;
+package org.doodle.config.autoconfigure.condition;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import java.lang.annotation.*;
+import org.doodle.config.server.ConfigServerDataType;
+import org.springframework.context.annotation.Conditional;
 
-public interface ConfigServerPropertiesRepository
-    extends MongoRepository<ConfigServerPropertiesEntity, String> {}
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Conditional(OnConfigServerDataTypeCondition.class)
+public @interface ConditionalOnConfigServerDataType {
+  ConfigServerDataType value() default ConfigServerDataType.JPA;
+}

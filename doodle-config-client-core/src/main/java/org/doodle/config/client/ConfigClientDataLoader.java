@@ -20,7 +20,7 @@ import java.net.URI;
 import java.util.*;
 import org.doodle.boot.core.LowestOrdered;
 import org.doodle.design.common.util.MapUtils;
-import org.doodle.design.config.ConfigEntity;
+import org.doodle.design.config.ConfigInstanceDTO;
 import org.doodle.design.config.ConfigService;
 import org.springframework.boot.BootstrapRegistry.InstanceSupplier;
 import org.springframework.boot.ConfigurableBootstrapContext;
@@ -43,7 +43,7 @@ public class ConfigClientDataLoader
       throws IOException, ConfigDataResourceNotFoundException {
     ConfigClientDataReference reference = resource.getReference();
     ConfigService configService = findConfigService(context, reference.getProperties());
-    Map<String, ConfigEntity> entityMap =
+    Map<String, ConfigInstanceDTO> entityMap =
         configService
             .getConfig(reference.getDataId(), reference.getGroup(), reference.getConfigId())
             .filter(
@@ -59,7 +59,7 @@ public class ConfigClientDataLoader
       return new ConfigData(Collections.emptyList(), getOptions());
     }
     List<MapPropertySource> propertySources = new ArrayList<>();
-    for (Map.Entry<String, ConfigEntity> entry : entityMap.entrySet()) {
+    for (Map.Entry<String, ConfigInstanceDTO> entry : entityMap.entrySet()) {
       Map<String, Object> flattened = MapUtils.flatten(entry.getValue().getConfigs());
       MapPropertySource mps = new MapPropertySource(entry.getKey(), flattened);
       propertySources.add(mps);

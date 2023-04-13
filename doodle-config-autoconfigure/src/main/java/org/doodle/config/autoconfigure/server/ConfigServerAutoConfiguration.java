@@ -15,56 +15,19 @@
  */
 package org.doodle.config.autoconfigure.server;
 
-import org.doodle.config.server.ConfigServerConfigController;
-import org.doodle.config.server.ConfigServerConfigRepository;
-import org.doodle.config.server.ConfigServerConfigService;
 import org.doodle.config.server.ConfigServerProperties;
-import org.doodle.config.server.ConfigServerPropertiesRepository;
-import org.doodle.design.config.ConfigService;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.data.mongodb.MongoDatabaseFactory;
-import org.springframework.data.mongodb.core.convert.*;
-import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.context.annotation.Import;
 
 @AutoConfiguration(before = MongoDataAutoConfiguration.class)
 @ConditionalOnClass(ConfigServerProperties.class)
 @EnableConfigurationProperties(ConfigServerProperties.class)
-@EnableMongoRepositories(
-    basePackageClasses = {
-      ConfigServerConfigRepository.class,
-      ConfigServerPropertiesRepository.class
-    })
-public class ConfigServerAutoConfiguration {
-
-  @Bean
-  @ConditionalOnMissingBean
-  public ConfigService configService(ConfigServerConfigRepository configRepository) {
-    return new ConfigServerConfigService(configRepository);
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
-  public ConfigServerConfigController configServerConfigController(ConfigService configService) {
-    return new ConfigServerConfigController(configService);
-  }
-
-  @Bean
-  @ConditionalOnMissingBean(MongoConverter.class)
-  MappingMongoConverter mappingMongoConverter(
-      MongoDatabaseFactory factory,
-      MongoMappingContext context,
-      MongoCustomConversions conversions) {
-    DbRefResolver dbRefResolver = new DefaultDbRefResolver(factory);
-    MappingMongoConverter mappingConverter = new MappingMongoConverter(dbRefResolver, context);
-    mappingConverter.setCustomConversions(conversions);
-    // 配置 map key 支持使用 "."
-    mappingConverter.setMapKeyDotReplacement(".");
-    return mappingConverter;
-  }
-}
+@Import({
+  ConfigServerJpaConfiguration.class,
+  ConfigServerMongodbConfiguration.class,
+  ConfigServerRSocketConfiguration.class
+})
+public class ConfigServerAutoConfiguration {}

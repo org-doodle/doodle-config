@@ -17,7 +17,7 @@ package org.doodle.config.server;
 
 import java.io.IOException;
 import lombok.AllArgsConstructor;
-import org.doodle.design.config.ConfigEntity;
+import org.doodle.design.config.ConfigInstanceDTO;
 import org.doodle.design.config.ConfigService;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -31,7 +31,7 @@ public class ConfigServerConfigController {
   private final ConfigService configService;
 
   @MessageMapping("{dataId}.{group}.{configId}")
-  public Flux<ConfigEntity> getConfig(
+  public Flux<ConfigInstanceDTO> getConfig(
       @DestinationVariable String dataId,
       @DestinationVariable String group,
       @DestinationVariable String configId)
