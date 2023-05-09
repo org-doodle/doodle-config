@@ -31,10 +31,7 @@ import org.springframework.messaging.rsocket.RSocketRequester;
 @AutoConfiguration(after = RSocketRequesterAutoConfiguration.class)
 @ConditionalOnClass({ConfigClientProperties.class, RSocketRequester.class})
 @EnableConfigurationProperties(ConfigClientProperties.class)
-@ConditionalOnProperty(
-    prefix = ConfigClientProperties.PREFIX,
-    name = ".enabled",
-    matchIfMissing = true)
+@ConditionalOnProperty(prefix = ConfigClientProperties.PREFIX, name = "enabled")
 public class ConfigClientAutoConfiguration {
 
   @Bean

@@ -25,7 +25,7 @@ public class ConfigClientProperties {
   public static final String PREFIX = "doodle.config.client";
 
   /** 配置服务端 rsocket 地址(暂不支持集群模式) */
-  private URI uri;
+  private URI uri = URI.create("tcp://localhost:9891");
 
   /** 默认配置分组 */
   private String group;
