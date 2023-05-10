@@ -15,19 +15,6 @@
  */
 package org.doodle.config.client;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.springframework.boot.context.config.Profiles;
+import org.doodle.design.config.ConfigOperation;
 
-@Getter
-@AllArgsConstructor
-public class ConfigClientDataReference {
-  private final ConfigClientProperties properties;
-  private final boolean isOptional;
-  private final Profiles profiles;
-  private String dataId;
-  /** 配置分组 */
-  private String group;
-  /** 配置实例ID */
-  private String configId;
-}
+public interface ConfigClientApi extends ConfigOperation {}

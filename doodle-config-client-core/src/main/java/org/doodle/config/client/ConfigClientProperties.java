@@ -15,7 +15,6 @@
  */
 package org.doodle.config.client;
 
-import java.net.URI;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -23,13 +22,4 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = ConfigClientProperties.PREFIX)
 public class ConfigClientProperties {
   public static final String PREFIX = "doodle.config.client";
-
-  /** 配置服务端 rsocket 地址(暂不支持集群模式) */
-  private URI uri = URI.create("tcp://localhost:9891");
-
-  /** 默认配置分组 */
-  private String group;
-
-  /** 默认配置实例ID */
-  private String configId;
 }

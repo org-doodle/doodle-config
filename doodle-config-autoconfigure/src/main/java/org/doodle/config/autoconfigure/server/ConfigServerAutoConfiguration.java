@@ -15,15 +15,16 @@
  */
 package org.doodle.config.autoconfigure.server;
 
+import org.doodle.broker.autoconfigure.client.BrokerClientAutoConfiguration;
+import org.doodle.broker.client.BrokerClientRSocketRequester;
 import org.doodle.config.server.ConfigServerProperties;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Import;
 
-@AutoConfiguration(before = MongoDataAutoConfiguration.class)
+@AutoConfiguration(before = BrokerClientAutoConfiguration.class)
 @ConditionalOnClass(ConfigServerProperties.class)
+@ConditionalOnBean(BrokerClientRSocketRequester.class)
 @EnableConfigurationProperties(ConfigServerProperties.class)
-@Import({ConfigServerMongodbConfiguration.class, ConfigServerRSocketConfiguration.class})
 public class ConfigServerAutoConfiguration {}

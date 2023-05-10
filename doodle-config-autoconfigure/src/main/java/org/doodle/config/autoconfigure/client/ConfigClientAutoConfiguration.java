@@ -15,30 +15,30 @@
  */
 package org.doodle.config.autoconfigure.client;
 
-import java.net.URI;
+import org.doodle.broker.client.BrokerClientRSocketRequester;
+import org.doodle.config.client.BrokerConfigClientApi;
+import org.doodle.config.client.ConfigClientApi;
 import org.doodle.config.client.ConfigClientProperties;
-import org.doodle.config.client.ConfigClientRSocketService;
-import org.doodle.design.config.ConfigService;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.rsocket.RSocketRequesterAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.messaging.rsocket.RSocketRequester;
 
 @AutoConfiguration(after = RSocketRequesterAutoConfiguration.class)
-@ConditionalOnClass({ConfigClientProperties.class, RSocketRequester.class})
+@ConditionalOnClass(ConfigClientProperties.class)
+@ConditionalOnBean(BrokerClientRSocketRequester.class)
 @EnableConfigurationProperties(ConfigClientProperties.class)
 @ConditionalOnProperty(prefix = ConfigClientProperties.PREFIX, name = "enabled")
 public class ConfigClientAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  public ConfigService configService(
-      RSocketRequester.Builder builder, ConfigClientProperties properties) {
-    URI uri = properties.getUri();
-    return new ConfigClientRSocketService(builder.tcp(uri.getHost(), uri.getPort()));
+  public ConfigClientApi configClientApi(
+      BrokerClientRSocketRequester requester, ConfigClientProperties properties) {
+    return new BrokerConfigClientApi(requester, properties);
   }
 }

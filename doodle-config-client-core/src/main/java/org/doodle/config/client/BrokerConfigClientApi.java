@@ -16,15 +16,12 @@
 package org.doodle.config.client;
 
 import lombok.Getter;
-import org.springframework.boot.context.config.ConfigDataResource;
+import lombok.RequiredArgsConstructor;
+import org.doodle.broker.client.BrokerClientRSocketRequester;
 
 @Getter
-public class ConfigClientDataResource extends ConfigDataResource {
-
-  private final ConfigClientDataReference reference;
-
-  public ConfigClientDataResource(ConfigClientDataReference reference) {
-    super(reference.isOptional());
-    this.reference = reference;
-  }
+@RequiredArgsConstructor
+public class BrokerConfigClientApi implements ConfigClientApi {
+  private final BrokerClientRSocketRequester requester;
+  private final ConfigClientProperties properties;
 }
