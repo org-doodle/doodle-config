@@ -18,6 +18,7 @@ package org.doodle.config.client;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.doodle.design.config.ConfigConstants;
 import org.springframework.boot.BootstrapRegistry.InstanceSupplier;
 import org.springframework.boot.ConfigurableBootstrapContext;
 import org.springframework.boot.context.config.*;
@@ -31,8 +32,11 @@ public class ConfigClientDataLocationResolver
   @Override
   public boolean isResolvable(
       ConfigDataLocationResolverContext context, ConfigDataLocation location) {
-    // TODO: 2023/5/11  add implementation
-    return false;
+    return location.hasPrefix(ConfigConstants.CONFIG_PREFIX)
+        && context
+            .getBinder()
+            .bind(ConfigClientProperties.PREFIX + ".enabled", Boolean.class)
+            .orElse(Boolean.FALSE);
   }
 
   @Override
