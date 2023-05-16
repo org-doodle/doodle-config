@@ -17,22 +17,26 @@ package org.doodle.config.client;
 
 import java.net.URI;
 import java.util.Map;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @ConfigurationProperties(prefix = ConfigClientProperties.PREFIX)
 public class ConfigClientProperties {
   public static final String PREFIX = "doodle.config.client";
 
-  private final Server server = new Server();
+  final Server server = new Server();
 
-  private String dataId;
-  private String group;
+  String dataId;
+  String group;
 
   @Data
+  @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
   public static class Server {
-    private final URI uri = URI.create("tcp://localhost:9892");
-    private final Map<String, String> tags = Map.of("server-type", "config");
+    URI uri = URI.create("tcp://localhost:9892");
+    Map<String, String> tags = Map.of("server-type", "config");
   }
 }
