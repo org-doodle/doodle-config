@@ -32,6 +32,7 @@ import org.springframework.boot.context.config.ConfigDataLoader;
 import org.springframework.boot.context.config.ConfigDataLoaderContext;
 import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.core.env.MapPropertySource;
+import org.springframework.http.MediaType;
 import org.springframework.http.codec.protobuf.ProtobufDecoder;
 import org.springframework.http.codec.protobuf.ProtobufEncoder;
 import org.springframework.messaging.rsocket.RSocketRequester;
@@ -79,13 +80,14 @@ public class ConfigClientDataLoader implements ConfigDataLoader<ConfigClientData
   }
 
   private RSocketRequester createRequester(ConfigClientProperties properties) {
-    URI serverUri = properties.getServerUri();
+    URI serverUri = properties.getServer().getUri();
     RSocketStrategies strategies =
         RSocketStrategies.builder()
             .decoder(new ProtobufDecoder())
             .encoder(new ProtobufEncoder())
             .build();
     return RSocketRequester.builder()
+        .dataMimeType(MediaType.APPLICATION_PROTOBUF)
         .rsocketStrategies(strategies)
         .tcp(serverUri.getHost(), serverUri.getPort());
   }

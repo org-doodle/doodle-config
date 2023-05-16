@@ -18,8 +18,12 @@ package org.doodle.config.client;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.doodle.broker.client.BrokerClientRSocketRequester;
+import org.doodle.design.broker.frame.BrokerFrame;
+import org.doodle.design.broker.frame.BrokerFrameMimeTypes;
+import org.doodle.design.broker.frame.BrokerFrameUtils;
 import org.doodle.design.config.ConfigId;
 import org.doodle.design.config.ConfigProps;
+import org.springframework.messaging.rsocket.RSocketRequester;
 import reactor.core.publisher.Flux;
 
 @Getter
@@ -27,9 +31,23 @@ import reactor.core.publisher.Flux;
 public class BrokerConfigApi implements ConfigApi {
   private final BrokerClientRSocketRequester requester;
   private final ConfigClientProperties properties;
+  private final BrokerFrame routingFrame;
+
+  public BrokerConfigApi(
+      BrokerClientRSocketRequester requester, ConfigClientProperties properties) {
+    this.requester = requester;
+    this.properties = properties;
+    this.routingFrame = BrokerFrameUtils.unicast(properties.getServer().getTags());
+  }
 
   @Override
   public Flux<ConfigProps> pull(ConfigId configId) {
-    return this.requester.route("config.pull").data(configId).retrieveFlux(ConfigProps.class);
+    return route("config.pull").data(configId).retrieveFlux(ConfigProps.class);
+  }
+
+  protected RSocketRequester.RequestSpec route(String route) {
+    return this.requester
+        .route(route)
+        .metadata(this.routingFrame, BrokerFrameMimeTypes.BROKER_FRAME_MIME_TYPE);
   }
 }
