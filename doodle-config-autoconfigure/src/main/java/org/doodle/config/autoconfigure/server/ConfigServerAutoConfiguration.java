@@ -23,7 +23,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
-@AutoConfiguration(before = BrokerClientAutoConfiguration.class)
+@AutoConfiguration(after = BrokerClientAutoConfiguration.class)
 @ConditionalOnClass(ConfigServerProperties.class)
 @ConditionalOnBean(BrokerClientRSocketRequester.class)
 @EnableConfigurationProperties(ConfigServerProperties.class)
