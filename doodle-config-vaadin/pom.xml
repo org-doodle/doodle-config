@@ -25,5 +25,9 @@
       <groupId>org.doodle</groupId>
       <artifactId>doodle-config-starter-vaadin</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.doodle</groupId>
+      <artifactId>doodle-config-starter-client</artifactId>
+    </dependency>
   </dependencies>
 </project>

@@ -93,11 +93,9 @@ public class ConfigClientDataLocationResolver
     if (!StringUtils.hasLength(path)) {
       return null;
     }
-
     if (!path.startsWith("/")) {
       path = "/" + path;
     }
-
     return new URI(path);
   }
 

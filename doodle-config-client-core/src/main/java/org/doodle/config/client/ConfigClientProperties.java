@@ -34,9 +34,9 @@ public class ConfigClientProperties {
   String group;
 
   @Data
-  @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+  @FieldDefaults(level = AccessLevel.PRIVATE)
   public static class Server {
     URI uri = URI.create("tcp://localhost:9892");
-    Map<String, String> tags = Map.of("server-type", "config");
+    final Map<String, String> tags = Map.of("server-type", "config");
   }
 }
