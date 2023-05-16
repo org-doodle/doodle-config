@@ -23,8 +23,9 @@ import org.doodle.design.broker.frame.BrokerFrameMimeTypes;
 import org.doodle.design.broker.frame.BrokerFrameUtils;
 import org.doodle.design.config.ConfigId;
 import org.doodle.design.config.ConfigProps;
+import org.springframework.lang.NonNull;
 import org.springframework.messaging.rsocket.RSocketRequester;
-import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Getter
 @RequiredArgsConstructor
@@ -41,8 +42,8 @@ public class BrokerConfigApi implements ConfigApi {
   }
 
   @Override
-  public Flux<ConfigProps> pull(ConfigId configId) {
-    return route("config.pull").data(configId).retrieveFlux(ConfigProps.class);
+  public Mono<ConfigProps> pull(@NonNull ConfigId configId) {
+    return route("config.pull").data(configId).retrieveMono(ConfigProps.class);
   }
 
   protected RSocketRequester.RequestSpec route(String route) {
