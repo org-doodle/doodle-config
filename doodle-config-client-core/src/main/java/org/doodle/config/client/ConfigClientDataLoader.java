@@ -16,16 +16,87 @@
 package org.doodle.config.client;
 
 import java.io.IOException;
+import java.net.URI;
+import java.util.Map;
+import java.util.StringJoiner;
+import lombok.RequiredArgsConstructor;
+import org.doodle.design.common.util.MapUtils;
+import org.doodle.design.common.util.ProtoUtils;
+import org.doodle.design.config.ConfigId;
+import org.doodle.design.config.ConfigProps;
+import org.doodle.design.config.ConfigPullOperation;
+import org.springframework.boot.BootstrapRegistry.InstanceSupplier;
+import org.springframework.boot.ConfigurableBootstrapContext;
 import org.springframework.boot.context.config.ConfigData;
 import org.springframework.boot.context.config.ConfigDataLoader;
 import org.springframework.boot.context.config.ConfigDataLoaderContext;
 import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.http.codec.protobuf.ProtobufDecoder;
+import org.springframework.http.codec.protobuf.ProtobufEncoder;
+import org.springframework.messaging.rsocket.RSocketRequester;
+import org.springframework.messaging.rsocket.RSocketStrategies;
+import reactor.core.publisher.Flux;
 
 public class ConfigClientDataLoader implements ConfigDataLoader<ConfigClientDataResource> {
 
   @Override
   public ConfigData load(ConfigDataLoaderContext context, ConfigClientDataResource resource)
       throws IOException, ConfigDataResourceNotFoundException {
-    return null;
+    ConfigClientDataReference reference = resource.getReference();
+    ConfigurableBootstrapContext bootstrapContext = context.getBootstrapContext();
+    ConfigPullApi pullApi =
+        bootstrapContext.isRegistered(ConfigPullApi.class)
+            ? bootstrapContext.get(ConfigPullApi.class)
+            : createConfigPullApi(context, reference.getProperties());
+    return pullApi
+        .pull(reference.getConfigId())
+        .onErrorMap(e -> new ConfigDataResourceNotFoundException(resource, e))
+        .map(this::flattenMapPropertySource)
+        .collectList()
+        .map(ConfigData::new)
+        .block();
+  }
+
+  private MapPropertySource flattenMapPropertySource(ConfigProps configProps) {
+    ConfigId configId = configProps.getId();
+    Map<String, Object> propsMap = ProtoUtils.fromProto(configProps.getProps());
+    String propsName =
+        new StringJoiner("@")
+            .add(configId.getGroup())
+            .add(configId.getDataId())
+            .add(configId.getProfile())
+            .toString();
+    return new MapPropertySource(propsName, MapUtils.flatten(propsMap));
+  }
+
+  private ConfigPullApi createConfigPullApi(
+      ConfigDataLoaderContext context, ConfigClientProperties properties) {
+    ConfigurableBootstrapContext bootstrapContext = context.getBootstrapContext();
+    ConfigPullApi pullApi = new ConfigPullApi(createRequester(properties));
+    bootstrapContext.registerIfAbsent(ConfigPullApi.class, InstanceSupplier.of(pullApi));
+    return pullApi;
+  }
+
+  private RSocketRequester createRequester(ConfigClientProperties properties) {
+    URI serverUri = properties.getServerUri();
+    RSocketStrategies strategies =
+        RSocketStrategies.builder()
+            .decoder(new ProtobufDecoder())
+            .encoder(new ProtobufEncoder())
+            .build();
+    return RSocketRequester.builder()
+        .rsocketStrategies(strategies)
+        .tcp(serverUri.getHost(), serverUri.getPort());
+  }
+
+  @RequiredArgsConstructor
+  static class ConfigPullApi implements ConfigPullOperation {
+    final RSocketRequester requester;
+
+    @Override
+    public Flux<ConfigProps> pull(ConfigId configId) {
+      return this.requester.route("config.pull").data(configId).retrieveFlux(ConfigProps.class);
+    }
   }
 }

@@ -15,16 +15,19 @@
  */
 package org.doodle.config.client;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.net.URI;
+import java.util.*;
+import lombok.SneakyThrows;
+import org.doodle.design.common.util.URIUtils;
 import org.doodle.design.config.ConfigConstants;
+import org.doodle.design.config.ConfigId;
 import org.springframework.boot.BootstrapRegistry.InstanceSupplier;
 import org.springframework.boot.ConfigurableBootstrapContext;
 import org.springframework.boot.context.config.*;
 import org.springframework.boot.context.properties.bind.BindHandler;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.util.StringUtils;
 
 public class ConfigClientDataLocationResolver
     implements ConfigDataLocationResolver<ConfigClientDataResource> {
@@ -59,9 +62,43 @@ public class ConfigClientDataLocationResolver
 
   private List<ConfigClientDataResource> loadConfigDataResource(
       ConfigDataLocation location, Profiles profiles, ConfigClientProperties properties) {
+    URI uri = getUri(location);
+    if (Objects.isNull(uri)) {
+      throw new IllegalArgumentException("配置参数错误!");
+    }
+    Map<String, String> queryMap = URIUtils.getQueryMap(uri);
+    String group = queryMap.getOrDefault(ConfigConstants.CONFIG_GROUP, properties.getGroup());
+    if (!StringUtils.hasLength(group)) {
+      throw new IllegalArgumentException("group 不能为空!");
+    }
+    String dataId = queryMap.getOrDefault(ConfigConstants.CONFIG_DATA_ID, properties.getDataId());
+    if (!StringUtils.hasLength(dataId)) {
+      throw new IllegalArgumentException("dataId 不能为空!");
+    }
     List<ConfigClientDataResource> resources = new ArrayList<>();
-    // TODO: 2023/5/11 add implementation
+    for (String profile : profiles.getAccepted()) {
+      ConfigClientDataReference reference =
+          new ConfigClientDataReference(
+              properties,
+              location.isOptional(),
+              ConfigId.newBuilder().setGroup(group).setDataId(dataId).setProfile(profile).build());
+      resources.add(new ConfigClientDataResource(reference));
+    }
     return resources;
+  }
+
+  @SneakyThrows
+  private URI getUri(ConfigDataLocation location) {
+    String path = location.getNonPrefixedValue(ConfigConstants.CONFIG_PREFIX);
+    if (!StringUtils.hasLength(path)) {
+      return null;
+    }
+
+    if (!path.startsWith("/")) {
+      path = "/" + path;
+    }
+
+    return new URI(path);
   }
 
   private ConfigClientProperties bindProperties(ConfigDataLocationResolverContext context) {

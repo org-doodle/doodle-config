@@ -18,10 +18,18 @@ package org.doodle.config.client;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.doodle.broker.client.BrokerClientRSocketRequester;
+import org.doodle.design.config.ConfigId;
+import org.doodle.design.config.ConfigProps;
+import reactor.core.publisher.Flux;
 
 @Getter
 @RequiredArgsConstructor
-public class BrokerConfigClientApi implements ConfigClientApi {
+public class BrokerConfigApi implements ConfigApi {
   private final BrokerClientRSocketRequester requester;
   private final ConfigClientProperties properties;
+
+  @Override
+  public Flux<ConfigProps> pull(ConfigId configId) {
+    return this.requester.route("config.pull").data(configId).retrieveFlux(ConfigProps.class);
+  }
 }

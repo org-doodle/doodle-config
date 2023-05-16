@@ -17,4 +17,4 @@ package org.doodle.config.client;
 
 import org.doodle.design.config.ConfigOperation;
 
-public interface ConfigClientApi extends ConfigOperation {}
+public interface ConfigApi extends ConfigOperation {}

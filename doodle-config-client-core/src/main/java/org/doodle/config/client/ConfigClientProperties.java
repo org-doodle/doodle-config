@@ -15,6 +15,7 @@
  */
 package org.doodle.config.client;
 
+import java.net.URI;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -22,4 +23,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = ConfigClientProperties.PREFIX)
 public class ConfigClientProperties {
   public static final String PREFIX = "doodle.config.client";
+
+  private URI serverUri = URI.create("tcp://localhost:9892");
+
+  private String dataId;
+  private String group;
+  private String id;
 }
