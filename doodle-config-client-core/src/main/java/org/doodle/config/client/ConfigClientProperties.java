@@ -15,11 +15,28 @@
  */
 package org.doodle.config.client;
 
+import java.net.URI;
+import java.util.Map;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @ConfigurationProperties(prefix = ConfigClientProperties.PREFIX)
 public class ConfigClientProperties {
   public static final String PREFIX = "doodle.config.client";
+
+  final Server server = new Server();
+
+  String dataId;
+  String group;
+
+  @Data
+  @FieldDefaults(level = AccessLevel.PRIVATE)
+  public static class Server {
+    URI uri = URI.create("tcp://localhost:9892");
+    final Map<String, String> tags = Map.of("server-type", "config");
+  }
 }

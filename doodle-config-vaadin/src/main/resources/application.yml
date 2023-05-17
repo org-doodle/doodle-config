@@ -1,0 +1,12 @@
+spring:
+  config:
+    import:
+      - doodleConfig:?group=config-vaadin&dataId=1001
+doodle:
+  config:
+    client:
+      enabled: true
+      server:
+        uri: tcp://127.0.0.1:9892
+        tags:
+          server-type: config

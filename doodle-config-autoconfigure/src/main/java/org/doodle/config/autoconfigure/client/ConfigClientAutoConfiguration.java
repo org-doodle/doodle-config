@@ -16,8 +16,8 @@
 package org.doodle.config.autoconfigure.client;
 
 import org.doodle.broker.client.BrokerClientRSocketRequester;
-import org.doodle.config.client.BrokerConfigClientApi;
-import org.doodle.config.client.ConfigClientApi;
+import org.doodle.config.client.BrokerConfigApi;
+import org.doodle.config.client.ConfigApi;
 import org.doodle.config.client.ConfigClientProperties;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -37,8 +37,8 @@ public class ConfigClientAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  public ConfigClientApi configClientApi(
+  public ConfigApi configApi(
       BrokerClientRSocketRequester requester, ConfigClientProperties properties) {
-    return new BrokerConfigClientApi(requester, properties);
+    return new BrokerConfigApi(requester, properties);
   }
 }

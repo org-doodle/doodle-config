@@ -1,4 +1,10 @@
 spring:
   rsocket:
     server:
-      port: 8001
+      port: 9892
+
+doodle:
+  broker:
+    client:
+      enabled: true
+      auto-connected: true

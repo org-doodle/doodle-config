@@ -15,6 +15,17 @@
  */
 package org.doodle.config.client;
 
-import org.doodle.design.config.ConfigOperation;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.FieldDefaults;
+import org.doodle.design.config.ConfigId;
 
-public interface ConfigClientApi extends ConfigOperation {}
+@Getter
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@AllArgsConstructor
+public class ConfigClientDataReference {
+  ConfigClientProperties properties;
+  boolean isOptional;
+  ConfigId configId;
+}
