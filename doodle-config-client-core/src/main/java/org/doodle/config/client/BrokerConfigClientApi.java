@@ -29,12 +29,12 @@ import reactor.core.publisher.Mono;
 
 @Getter
 @RequiredArgsConstructor
-public class BrokerConfigApi implements ConfigApi {
+public class BrokerConfigClientApi implements ConfigClientApi {
   private final BrokerClientRSocketRequester requester;
   private final ConfigClientProperties properties;
   private final BrokerFrame routingFrame;
 
-  public BrokerConfigApi(
+  public BrokerConfigClientApi(
       BrokerClientRSocketRequester requester, ConfigClientProperties properties) {
     this.requester = requester;
     this.properties = properties;

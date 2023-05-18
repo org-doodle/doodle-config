@@ -26,12 +26,17 @@
     </dependency>
     <dependency>
       <groupId>org.doodle</groupId>
-      <artifactId>doodle-config-client-core</artifactId>
+      <artifactId>doodle-broker-autoconfigure</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.doodle</groupId>
+      <artifactId>doodle-broker-client-core</artifactId>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.doodle</groupId>
-      <artifactId>doodle-broker-autoconfigure</artifactId>
+      <artifactId>doodle-config-client-core</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.doodle</groupId>
