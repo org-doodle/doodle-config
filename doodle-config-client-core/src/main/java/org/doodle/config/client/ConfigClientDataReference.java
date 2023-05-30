@@ -19,7 +19,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
-import org.doodle.design.config.ConfigId;
+import org.doodle.design.config.model.dto.ConfigIdInfoDto;
 
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -27,5 +27,5 @@ import org.doodle.design.config.ConfigId;
 public class ConfigClientDataReference {
   ConfigClientProperties properties;
   boolean isOptional;
-  ConfigId configId;
+  ConfigIdInfoDto configId;
 }

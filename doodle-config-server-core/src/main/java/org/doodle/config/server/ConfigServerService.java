@@ -15,23 +15,23 @@
  */
 package org.doodle.config.server;
 
-import lombok.RequiredArgsConstructor;
+import org.doodle.design.common.Result;
 import org.doodle.design.config.ConfigOperation;
+import org.doodle.design.config.ConfigPullOperation;
 import org.doodle.design.config.ConfigPullReply;
 import org.doodle.design.config.ConfigPullRequest;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Mono;
 
-@Controller
-@MessageMapping("config")
-@RequiredArgsConstructor
-public class ConfigServerController implements ConfigOperation {
-  private final ConfigServerService service;
+public class ConfigServerService implements ConfigOperation, ConfigPullOperation.RestPullOperation {
 
-  @MessageMapping("pull")
+  @Override
+  public Result<org.doodle.design.config.model.payload.reply.ConfigPullReply> pull(
+      org.doodle.design.config.model.payload.request.ConfigPullRequest request) {
+    return Result.bad();
+  }
+
   @Override
   public Mono<ConfigPullReply> pull(ConfigPullRequest request) {
-    return this.service.pull(request);
+    return Mono.empty();
   }
 }

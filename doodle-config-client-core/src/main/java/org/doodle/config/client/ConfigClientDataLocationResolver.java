@@ -20,7 +20,7 @@ import java.util.*;
 import lombok.SneakyThrows;
 import org.doodle.design.common.util.URIUtils;
 import org.doodle.design.config.ConfigConstants;
-import org.doodle.design.config.ConfigId;
+import org.doodle.design.config.model.dto.ConfigIdInfoDto;
 import org.springframework.boot.BootstrapRegistry.InstanceSupplier;
 import org.springframework.boot.ConfigurableBootstrapContext;
 import org.springframework.boot.context.config.*;
@@ -81,7 +81,7 @@ public class ConfigClientDataLocationResolver
           new ConfigClientDataReference(
               properties,
               location.isOptional(),
-              ConfigId.newBuilder().setGroup(group).setDataId(dataId).setProfile(profile).build());
+              ConfigIdInfoDto.builder().group(group).dataId(dataId).profile(profile).build());
       resources.add(new ConfigClientDataResource(reference));
     }
     return resources;

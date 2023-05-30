@@ -16,22 +16,23 @@
 package org.doodle.config.server;
 
 import lombok.RequiredArgsConstructor;
-import org.doodle.design.config.ConfigOperation;
-import org.doodle.design.config.ConfigPullReply;
-import org.doodle.design.config.ConfigPullRequest;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.stereotype.Controller;
-import reactor.core.publisher.Mono;
+import org.doodle.design.common.Result;
+import org.doodle.design.config.ConfigPullOperation;
+import org.doodle.design.config.model.payload.reply.ConfigPullReply;
+import org.doodle.design.config.model.payload.request.ConfigPullRequest;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-@MessageMapping("config")
+@RestController
+@RequestMapping("/config")
 @RequiredArgsConstructor
-public class ConfigServerController implements ConfigOperation {
+public class ConfigServerRestController implements ConfigPullOperation.RestPullOperation {
   private final ConfigServerService service;
 
-  @MessageMapping("pull")
+  @PostMapping("/pull")
   @Override
-  public Mono<ConfigPullReply> pull(ConfigPullRequest request) {
+  public Result<ConfigPullReply> pull(ConfigPullRequest request) {
     return this.service.pull(request);
   }
 }

@@ -19,13 +19,11 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.StringJoiner;
 import lombok.RequiredArgsConstructor;
+import org.doodle.design.common.exception.InvalidResultException;
 import org.doodle.design.common.util.MapUtils;
 import org.doodle.design.common.util.ProtoUtils;
-import org.doodle.design.config.ConfigId;
-import org.doodle.design.config.ConfigProps;
-import org.doodle.design.config.ConfigPullOperation;
+import org.doodle.design.config.*;
 import org.springframework.boot.BootstrapContextClosedEvent;
 import org.springframework.boot.BootstrapRegistry.InstanceSupplier;
 import org.springframework.boot.ConfigurableBootstrapContext;
@@ -53,25 +51,11 @@ public class ConfigClientDataLoader implements ConfigDataLoader<ConfigClientData
         bootstrapContext.isRegistered(ConfigPullApi.class)
             ? bootstrapContext.get(ConfigPullApi.class)
             : createConfigPullApi(context, reference.getProperties());
-    return pullApi
-        .pull(reference.getConfigId())
-        .onErrorMap(e -> new ConfigDataResourceNotFoundException(resource, e))
-        .map(this::flattenMapPropertySource)
-        .map(List::of)
-        .map(ConfigData::new)
-        .block();
-  }
 
-  private MapPropertySource flattenMapPropertySource(ConfigProps configProps) {
-    ConfigId configId = configProps.getId();
-    Map<String, Object> propsMap = ProtoUtils.fromProto(configProps.getProps());
-    String propsName =
-        new StringJoiner("@")
-            .add(configId.getGroup())
-            .add(configId.getDataId())
-            .add(configId.getProfile())
-            .toString();
-    return new MapPropertySource(propsName, MapUtils.flatten(propsMap));
+    return pullApi
+        .pull(reference)
+        .onErrorMap(e -> new ConfigDataResourceNotFoundException(resource, e))
+        .block();
   }
 
   private ConfigPullApi createConfigPullApi(
@@ -100,10 +84,30 @@ public class ConfigClientDataLoader implements ConfigDataLoader<ConfigClientData
   static class ConfigPullApi
       implements ConfigPullOperation, ApplicationListener<BootstrapContextClosedEvent> {
     final RSocketRequester requester;
+    final ConfigClientMapper mapper = new ConfigClientMapper();
+
+    public Mono<ConfigData> pull(ConfigClientDataReference reference) {
+      return pull(mapper.toRequest(reference.getConfigId()))
+          .map(this::flattenMapPropertySource)
+          .map(List::of)
+          .map(ConfigData::new);
+    }
+
+    private MapPropertySource flattenMapPropertySource(ConfigPullReply reply) {
+      if (reply.getResultCase() == ConfigPullReply.ResultCase.ERROR) {
+        throw new InvalidResultException(reply.getError());
+      }
+      ConfigPropsInfo configProps = reply.getConfigProps();
+      ConfigIdInfo configId = configProps.getConfigId();
+      Map<String, Object> propsMap = ProtoUtils.fromProto(configProps.getProps());
+      String propsName =
+          String.join("@", configId.getGroup(), configId.getDataId(), configId.getProfile());
+      return new MapPropertySource(propsName, MapUtils.flatten(propsMap));
+    }
 
     @Override
-    public Mono<ConfigProps> pull(ConfigId configId) {
-      return this.requester.route("config.pull").data(configId).retrieveMono(ConfigProps.class);
+    public Mono<ConfigPullReply> pull(ConfigPullRequest request) {
+      return this.requester.route("config.pull").data(request).retrieveMono(ConfigPullReply.class);
     }
 
     @Override

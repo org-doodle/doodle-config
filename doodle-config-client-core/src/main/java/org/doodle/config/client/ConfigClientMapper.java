@@ -13,25 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.doodle.config.server;
+package org.doodle.config.client;
 
-import lombok.RequiredArgsConstructor;
-import org.doodle.design.config.ConfigOperation;
-import org.doodle.design.config.ConfigPullReply;
+import org.doodle.design.config.ConfigMapper;
 import org.doodle.design.config.ConfigPullRequest;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.stereotype.Controller;
-import reactor.core.publisher.Mono;
+import org.doodle.design.config.model.dto.ConfigIdInfoDto;
 
-@Controller
-@MessageMapping("config")
-@RequiredArgsConstructor
-public class ConfigServerController implements ConfigOperation {
-  private final ConfigServerService service;
+public class ConfigClientMapper extends ConfigMapper {
 
-  @MessageMapping("pull")
-  @Override
-  public Mono<ConfigPullReply> pull(ConfigPullRequest request) {
-    return this.service.pull(request);
+  public ConfigPullRequest toRequest(ConfigIdInfoDto dto) {
+    return ConfigPullRequest.newBuilder().setConfigId(toProto(dto)).build();
   }
 }

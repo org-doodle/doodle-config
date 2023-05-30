@@ -19,6 +19,7 @@ import org.doodle.broker.autoconfigure.client.BrokerClientAutoConfiguration;
 import org.doodle.broker.client.BrokerClientRSocketRequester;
 import org.doodle.config.server.ConfigServerController;
 import org.doodle.config.server.ConfigServerProperties;
+import org.doodle.config.server.ConfigServerRestController;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -36,5 +37,11 @@ public class ConfigServerAutoConfiguration {
   @ConditionalOnMissingBean
   public ConfigServerController configServerController() {
     return new ConfigServerController();
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  public ConfigServerRestController configServerRestController() {
+    return new ConfigServerRestController();
   }
 }
