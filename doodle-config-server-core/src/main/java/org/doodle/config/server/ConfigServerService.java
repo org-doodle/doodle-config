@@ -15,23 +15,34 @@
  */
 package org.doodle.config.server;
 
+import lombok.RequiredArgsConstructor;
 import org.doodle.design.common.Result;
-import org.doodle.design.config.ConfigOperation;
-import org.doodle.design.config.ConfigPullOperation;
-import org.doodle.design.config.ConfigPullReply;
-import org.doodle.design.config.ConfigPullRequest;
+import org.doodle.design.common.util.ProtoUtils;
+import org.doodle.design.config.*;
 import reactor.core.publisher.Mono;
 
+@RequiredArgsConstructor
 public class ConfigServerService implements ConfigOperation, ConfigPullOperation.RestPullOperation {
+  private final ConfigServerMapper mapper;
+  private final ConfigServerInstanceRepo instanceRepo;
 
   @Override
   public Result<org.doodle.design.config.model.payload.reply.ConfigPullReply> pull(
       org.doodle.design.config.model.payload.request.ConfigPullRequest request) {
-    return Result.bad();
+    return Mono.just(request)
+        .map(mapper::toProto)
+        .flatMap(this::pull)
+        .map(mapper::fromProto)
+        .block();
   }
 
   @Override
   public Mono<ConfigPullReply> pull(ConfigPullRequest request) {
-    return Mono.empty();
+    return Mono.just(request)
+        .map(ConfigPullRequest::getConfigId)
+        .flatMap(instanceRepo::findByConfigId)
+        .map(mapper::toProto)
+        .map(mapper::toReply)
+        .onErrorReturn(mapper.toError(ProtoUtils.toProto(Result.bad())));
   }
 }
