@@ -41,8 +41,9 @@ public class ConfigServerAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  public ConfigServerService configServerService() {
-    return new ConfigServerService();
+  public ConfigServerService configServerService(
+      ConfigServerMapper mapper, ConfigServerInstanceRepo instanceRepo) {
+    return new ConfigServerService(mapper, instanceRepo);
   }
 
   @Bean
