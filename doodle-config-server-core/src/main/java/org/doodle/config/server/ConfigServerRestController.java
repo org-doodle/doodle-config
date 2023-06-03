@@ -23,6 +23,7 @@ import org.doodle.design.config.model.payload.request.ConfigPullRequest;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/config")
@@ -32,7 +33,7 @@ public class ConfigServerRestController implements ConfigPullOperation.RestPullO
 
   @PostMapping("/pull")
   @Override
-  public Result<ConfigPullReply> pull(ConfigPullRequest request) {
+  public Mono<Result<ConfigPullReply>> pull(ConfigPullRequest request) {
     return this.service.pull(request);
   }
 }

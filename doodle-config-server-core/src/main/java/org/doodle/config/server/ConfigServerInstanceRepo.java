@@ -18,6 +18,8 @@ package org.doodle.config.server;
 import lombok.RequiredArgsConstructor;
 import org.doodle.design.config.ConfigIdInfo;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
@@ -37,6 +39,12 @@ class InstanceRepoCustomImpl implements InstanceRepoCustom {
 
   @Override
   public Mono<ConfigServerInstanceEntity> findByConfigId(ConfigIdInfo configId) {
-    return Mono.empty();
+    return mongoTemplate.findOne(
+        Query.query(
+            Criteria.where("configId.group")
+                .is(configId.getGroup())
+                .andOperator(Criteria.where("configId.dataId").is(configId.getDataId()))
+                .andOperator(Criteria.where("configId.profile").is(configId.getProfile()))),
+        ConfigServerInstanceEntity.class);
   }
 }

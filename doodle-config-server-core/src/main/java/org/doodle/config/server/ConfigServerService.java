@@ -27,13 +27,9 @@ public class ConfigServerService implements ConfigOperation, ConfigPullOperation
   private final ConfigServerInstanceRepo instanceRepo;
 
   @Override
-  public Result<org.doodle.design.config.model.payload.reply.ConfigPullReply> pull(
+  public Mono<Result<org.doodle.design.config.model.payload.reply.ConfigPullReply>> pull(
       org.doodle.design.config.model.payload.request.ConfigPullRequest request) {
-    return Mono.just(request)
-        .map(mapper::toProto)
-        .flatMap(this::pull)
-        .map(mapper::fromProto)
-        .block();
+    return Mono.just(request).map(mapper::toProto).flatMap(this::pull).map(mapper::fromProto);
   }
 
   @Override
