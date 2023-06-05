@@ -15,9 +15,11 @@
  */
 package org.doodle.config.autoconfigure.server;
 
+import io.swagger.v3.oas.models.info.Info;
 import org.doodle.broker.autoconfigure.client.BrokerClientAutoConfiguration;
 import org.doodle.broker.client.BrokerClientRSocketRequester;
 import org.doodle.config.server.*;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -33,6 +35,29 @@ import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRep
 @EnableConfigurationProperties(ConfigServerProperties.class)
 @EnableReactiveMongoRepositories(basePackageClasses = ConfigServerInstanceRepo.class)
 public class ConfigServerAutoConfiguration {
+
+  @AutoConfiguration
+  @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
+  public static class RestMvcConfiguration {
+    @Bean
+    @ConditionalOnMissingBean
+    public ConfigServerRestController configServerRestController(ConfigServerService service) {
+      return new ConfigServerRestController(service);
+    }
+  }
+
+  @AutoConfiguration
+  @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
+  public static class SpringDocConfiguration {
+    @Bean
+    public GroupedOpenApi configGroupedOpenApi() {
+      return GroupedOpenApi.builder()
+          .group("config-apis")
+          .addOpenApiCustomizer(openApi -> openApi.info(new Info().title("Config API")))
+          .packagesToScan("org.doodle.config.server")
+          .build();
+    }
+  }
 
   @Bean
   @ConditionalOnMissingBean
@@ -51,12 +76,5 @@ public class ConfigServerAutoConfiguration {
   @ConditionalOnMissingBean
   public ConfigServerController configServerController(ConfigServerService service) {
     return new ConfigServerController(service);
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
-  @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
-  public ConfigServerRestController configServerRestController(ConfigServerService service) {
-    return new ConfigServerRestController(service);
   }
 }

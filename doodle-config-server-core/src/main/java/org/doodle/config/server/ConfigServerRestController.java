@@ -15,6 +15,7 @@
  */
 package org.doodle.config.server;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.doodle.design.common.Result;
 import org.doodle.design.config.ConfigPullOperation;
@@ -31,6 +32,7 @@ import reactor.core.publisher.Mono;
 public class ConfigServerRestController implements ConfigPullOperation.RestPullOperation {
   private final ConfigServerService service;
 
+  @Operation(summary = "获取配置")
   @PostMapping("/pull")
   @Override
   public Mono<Result<ConfigPullReply>> pull(ConfigPullRequest request) {
