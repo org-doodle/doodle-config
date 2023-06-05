@@ -41,10 +41,11 @@ class InstanceRepoCustomImpl implements InstanceRepoCustom {
   public Mono<ConfigServerInstanceEntity> findByConfigId(ConfigIdInfo configId) {
     return mongoTemplate.findOne(
         Query.query(
-            Criteria.where("configId.group")
-                .is(configId.getGroup())
-                .andOperator(Criteria.where("configId.dataId").is(configId.getDataId()))
-                .andOperator(Criteria.where("configId.profile").is(configId.getProfile()))),
+            new Criteria()
+                .andOperator(
+                    Criteria.where("configId.group").is(configId.getGroup()),
+                    Criteria.where("configId.dataId").is(configId.getDataId()),
+                    Criteria.where("config.profile").is(configId.getProfile()))),
         ConfigServerInstanceEntity.class);
   }
 }

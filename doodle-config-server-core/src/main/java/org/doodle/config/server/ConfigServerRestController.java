@@ -22,6 +22,7 @@ import org.doodle.design.config.ConfigPullOperation;
 import org.doodle.design.config.model.payload.reply.ConfigPullReply;
 import org.doodle.design.config.model.payload.request.ConfigPullRequest;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
@@ -35,7 +36,7 @@ public class ConfigServerRestController implements ConfigPullOperation.RestPullO
   @Operation(summary = "获取配置")
   @PostMapping("/pull")
   @Override
-  public Mono<Result<ConfigPullReply>> pull(ConfigPullRequest request) {
+  public Mono<Result<ConfigPullReply>> pull(@RequestBody ConfigPullRequest request) {
     return this.service.pull(request);
   }
 }

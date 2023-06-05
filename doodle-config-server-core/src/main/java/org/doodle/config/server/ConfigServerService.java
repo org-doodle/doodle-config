@@ -16,11 +16,13 @@
 package org.doodle.config.server;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.doodle.design.common.Result;
 import org.doodle.design.common.util.ProtoUtils;
 import org.doodle.design.config.*;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @RequiredArgsConstructor
 public class ConfigServerService implements ConfigOperation, ConfigPullOperation.RestPullOperation {
   private final ConfigServerMapper mapper;
@@ -39,6 +41,7 @@ public class ConfigServerService implements ConfigOperation, ConfigPullOperation
         .flatMap(instanceRepo::findByConfigId)
         .map(mapper::toProto)
         .map(mapper::toReply)
+        .doOnError(error -> log.error("", error))
         .onErrorReturn(mapper.toError(ProtoUtils.toProto(Result.bad())));
   }
 }
