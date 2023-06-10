@@ -15,14 +15,9 @@
  */
 package org.doodle.config.server;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.experimental.FieldDefaults;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
-@Data
-@FieldDefaults(level = AccessLevel.PRIVATE)
-@ConfigurationProperties(prefix = ConfigServerProperties.PREFIX)
-public class ConfigServerProperties {
-  public static final String PREFIX = "doodle.config.server";
-}
+@Repository
+public interface ConfigServerInstanceRepository
+    extends MongoRepository<ConfigServerInstanceEntity, String> {}

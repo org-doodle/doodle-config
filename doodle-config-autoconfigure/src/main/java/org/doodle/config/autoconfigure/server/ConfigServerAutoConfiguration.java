@@ -27,27 +27,18 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.config.EnableMongoAuditing;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @AutoConfiguration(after = BrokerClientAutoConfiguration.class)
 @ConditionalOnClass(ConfigServerProperties.class)
-@ConditionalOnBean(BrokerClientRSocketRequester.class)
 @EnableConfigurationProperties(ConfigServerProperties.class)
-@EnableReactiveMongoRepositories(basePackageClasses = ConfigServerInstanceRepo.class)
 public class ConfigServerAutoConfiguration {
 
-  @AutoConfiguration
-  @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
-  public static class RestMvcConfiguration {
-    @Bean
-    @ConditionalOnMissingBean
-    public ConfigServerRestController configServerRestController(ConfigServerService service) {
-      return new ConfigServerRestController(service);
-    }
-  }
-
-  @AutoConfiguration
-  @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
+  @Configuration(proxyBeanMethods = false)
+  @ConditionalOnClass(GroupedOpenApi.class)
+  @ConditionalOnWebApplication
   public static class SpringDocConfiguration {
     @Bean
     public GroupedOpenApi configGroupedOpenApi() {
@@ -59,22 +50,34 @@ public class ConfigServerAutoConfiguration {
     }
   }
 
+  @Configuration(proxyBeanMethods = false)
+  @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
+  @EnableMongoAuditing
+  @EnableMongoRepositories(basePackageClasses = ConfigServerInstanceRepository.class)
+  public static class ServletConfiguration {
+    @Bean
+    @ConditionalOnMissingBean
+    public ConfigServerServletController configServerRestController(
+        ConfigServerInstanceRepository instanceRepository) {
+      return new ConfigServerServletController(instanceRepository);
+    }
+  }
+
+  @Configuration(proxyBeanMethods = false)
+  @ConditionalOnClass(BrokerClientRSocketRequester.class)
+  @ConditionalOnBean(BrokerClientRSocketRequester.class)
+  public static class RSocketConfiguration {
+    @Bean
+    @ConditionalOnMissingBean
+    public ConfigServerRSocketController configServerController(
+        ConfigServerInstanceRepository instanceRepository, ConfigServerMapper mapper) {
+      return new ConfigServerRSocketController(instanceRepository, mapper);
+    }
+  }
+
   @Bean
   @ConditionalOnMissingBean
   public ConfigServerMapper configServerMapper() {
     return new ConfigServerMapper();
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
-  public ConfigServerService configServerService(
-      ConfigServerMapper mapper, ConfigServerInstanceRepo instanceRepo) {
-    return new ConfigServerService(mapper, instanceRepo);
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
-  public ConfigServerController configServerController(ConfigServerService service) {
-    return new ConfigServerController(service);
   }
 }

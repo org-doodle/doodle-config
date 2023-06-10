@@ -16,29 +16,39 @@
 package org.doodle.config.autoconfigure.client;
 
 import org.doodle.broker.client.BrokerClientRSocketRequester;
-import org.doodle.config.client.BrokerConfigClientApi;
-import org.doodle.config.client.ConfigClientApi;
-import org.doodle.config.client.ConfigClientProperties;
+import org.doodle.config.client.*;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.boot.autoconfigure.rsocket.RSocketRequesterAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @AutoConfiguration(after = RSocketRequesterAutoConfiguration.class)
-@ConditionalOnClass(ConfigClientProperties.class)
-@ConditionalOnBean(BrokerClientRSocketRequester.class)
 @EnableConfigurationProperties(ConfigClientProperties.class)
 @ConditionalOnProperty(prefix = ConfigClientProperties.PREFIX, name = "enabled")
 public class ConfigClientAutoConfiguration {
 
-  @Bean
-  @ConditionalOnMissingBean
-  public ConfigClientApi configClientApi(
-      BrokerClientRSocketRequester requester, ConfigClientProperties properties) {
-    return new BrokerConfigClientApi(requester, properties);
+  @Configuration(proxyBeanMethods = false)
+  @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+  public static class ServletConfiguration {
+    @Bean
+    @ConditionalOnMissingBean
+    public ConfigClientServlet configClientServlet(RestTemplateBuilder builder) {
+      return new ConfigClientServletImpl(builder.build());
+    }
+  }
+
+  @Configuration(proxyBeanMethods = false)
+  @ConditionalOnClass(BrokerClientRSocketRequester.class)
+  @ConditionalOnBean(BrokerClientRSocketRequester.class)
+  public static class RSocketConfiguration {
+    @Bean
+    @ConditionalOnMissingBean
+    public ConfigClientRSocket configClientRSocket(
+        BrokerClientRSocketRequester requester, ConfigClientProperties properties) {
+      return new ConfigClientRSocketImpl(requester, properties);
+    }
   }
 }

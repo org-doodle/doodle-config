@@ -13,16 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.doodle.config.server;
+package org.doodle.config.client;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.experimental.FieldDefaults;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.doodle.design.config.ConfigPullOps;
 
-@Data
-@FieldDefaults(level = AccessLevel.PRIVATE)
-@ConfigurationProperties(prefix = ConfigServerProperties.PREFIX)
-public class ConfigServerProperties {
-  public static final String PREFIX = "doodle.config.server";
-}
+@FunctionalInterface
+public interface ConfigClientServlet extends ConfigPullOps.Servlet {}

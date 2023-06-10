@@ -82,7 +82,7 @@ public class ConfigClientDataLoader implements ConfigDataLoader<ConfigClientData
 
   @RequiredArgsConstructor
   static class ConfigPullApi
-      implements ConfigPullOperation, ApplicationListener<BootstrapContextClosedEvent> {
+      implements ConfigPullOps.RSocket, ApplicationListener<BootstrapContextClosedEvent> {
     final RSocketRequester requester;
     final ConfigClientMapper mapper = new ConfigClientMapper();
 

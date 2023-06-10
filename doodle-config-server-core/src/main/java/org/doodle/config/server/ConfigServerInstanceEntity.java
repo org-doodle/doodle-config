@@ -23,7 +23,6 @@ import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 import org.doodle.boot.mongodb.MongodbEntity;
-import org.doodle.design.config.model.dto.ConfigIdInfoDto;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @SuperBuilder
@@ -35,7 +34,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class ConfigServerInstanceEntity extends MongodbEntity<String> {
   public static final String COLLECTION = "config-instances";
 
-  ConfigIdInfoDto configId;
+  String group;
+  String dataId;
+  String profile;
 
   Map<String, Object> configProps;
 }

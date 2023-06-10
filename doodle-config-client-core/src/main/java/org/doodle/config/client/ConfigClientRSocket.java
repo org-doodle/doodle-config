@@ -15,6 +15,7 @@
  */
 package org.doodle.config.client;
 
-import org.doodle.design.config.ConfigOperation;
+import org.doodle.design.config.ConfigPullOps;
 
-public interface ConfigClientApi extends ConfigOperation {}
+@FunctionalInterface
+public interface ConfigClientRSocket extends ConfigPullOps.RSocket {}

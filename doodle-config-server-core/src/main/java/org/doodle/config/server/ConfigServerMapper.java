@@ -15,6 +15,7 @@
  */
 package org.doodle.config.server;
 
+import org.doodle.design.config.ConfigIdInfo;
 import org.doodle.design.config.ConfigMapper;
 import org.doodle.design.config.ConfigPropsInfo;
 
@@ -22,7 +23,11 @@ public class ConfigServerMapper extends ConfigMapper {
 
   public ConfigPropsInfo toProto(ConfigServerInstanceEntity instanceEntity) {
     return ConfigPropsInfo.newBuilder()
-        .setConfigId(toProto(instanceEntity.getConfigId()))
+        .setConfigId(
+            ConfigIdInfo.newBuilder()
+                .setGroup(instanceEntity.getGroup())
+                .setDataId(instanceEntity.getDataId())
+                .setProfile(instanceEntity.getProfile()))
         .setProps(toProto(instanceEntity.getConfigProps()))
         .build();
   }
