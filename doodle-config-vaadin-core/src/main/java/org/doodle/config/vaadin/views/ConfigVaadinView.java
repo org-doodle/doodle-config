@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.doodle.config.vaadin;
+package org.doodle.config.vaadin.views;
 
-import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.Route;
+import jakarta.annotation.security.RolesAllowed;
+import org.doodle.boot.vaadin.views.MainLayout;
 
-@Data
-@ConfigurationProperties(prefix = ConfigVaadinProperties.PREFIX)
-public class ConfigVaadinProperties {
-  public static final String PREFIX = "doodle.config.vaadin";
-
-  public static final String PREFIX_VIEWS = "org.doodle.config.vaadin.views";
-}
+@RolesAllowed("CONFIG_ADMIN")
+@PageTitle("Config")
+@Route(value = "config", layout = MainLayout.class)
+public class ConfigVaadinView extends VerticalLayout {}

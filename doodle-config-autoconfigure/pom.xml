@@ -53,5 +53,15 @@
       <artifactId>spring-data-mongodb</artifactId>
       <optional>true</optional>
     </dependency>
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-spring</artifactId>
+      <optional>true</optional>
+    </dependency>
   </dependencies>
 </project>

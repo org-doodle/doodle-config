@@ -15,12 +15,27 @@
  */
 package org.doodle.config.autoconfigure.vaadin;
 
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.router.RouterLink;
+import org.doodle.boot.vaadin.EnableVaadin;
+import org.doodle.boot.vaadin.views.TabSupplier;
 import org.doodle.config.vaadin.ConfigVaadinProperties;
+import org.doodle.config.vaadin.views.ConfigVaadinView;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
 @ConditionalOnClass(ConfigVaadinProperties.class)
 @EnableConfigurationProperties(ConfigVaadinProperties.class)
-public class ConfigVaadinAutoConfiguration {}
+@EnableVaadin(ConfigVaadinProperties.PREFIX_VIEWS)
+public class ConfigVaadinAutoConfiguration {
+
+  @Bean
+  public TabSupplier configTabView() {
+    return (authenticationContext) ->
+        new Tab(VaadinIcon.DATABASE.create(), new RouterLink("配置中心", ConfigVaadinView.class));
+  }
+}
